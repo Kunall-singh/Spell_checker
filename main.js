@@ -2,7 +2,12 @@
 let dictionary = [];
 
 fetch('dictionary.txt')
-  .then(response => response.text())
+  .then(response => {
+    if (!response.ok) {
+      throw new Error(`Failed to load dictionary: ${response.statusText}`);
+    }
+    return response.text();
+  })
   .then(data => {
     dictionary = data.split('\n').map(word => word.trim());
   })
@@ -80,3 +85,9 @@ function findSuggestions() {
     suggestionsList.appendChild(listItem);
   });
 }
+
+// Attach event listener after DOM is loaded
+document.addEventListener('DOMContentLoaded', () => {
+  const button = document.getElementById('findSuggestionsButton');
+  button.addEventListener('click', findSuggestions);
+});
